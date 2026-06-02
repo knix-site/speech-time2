@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speech Time</title>
+  <meta name="description" content="Ingliz tili talaffuz mashqi va tarjima ilovasi"/>
+  <meta name="theme-color" content="#1a2e4a"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Speech Time"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png"/>
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="app">
+
+    <div class="header">
+      <div class="app-brand">
+        <img src="icon.jpg" class="app-icon" alt="Speech Time"/>
+        <span class="app-title">Speech Time</span>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('translate')">Tarjima</button>
+        <button class="tab" onclick="switchTab('pronounce')">Talaffuz</button>
+      </div>
+    </div>
+
+    <!-- AI MODEL STATUS BAR -->
+    <div id="model-status" class="model-status" style="display:none;">
+      <span class="model-status-text">AI model yuklanmoqda...</span>
+      <div id="model-bar" class="model-bar" style="display:none;">
+        <div id="model-bar-fill" class="model-bar-fill" style="width:0%"></div>
+        <span id="model-pct" class="model-pct">0%</span>
+      </div>
+    </div>
+
+    <!-- TARJIMA SAHIFASI -->
+    <div id="page-translate" class="page">
+      <div class="content">
+        <div class="box transcript-box">
+          <div class="box-label">
+            🎧 Inglizcha
+            <button class="clear-btn" onclick="clearAll()">🗑</button>
+          </div>
+          <div id="transcript" class="box-text">
+            <span id="t-ph" class="ph">Mikrofon bosing va gapiring...</span>
+          </div>
+          <div id="word-count" class="word-count"></div>
+        </div>
+
+        <div class="box translation-box">
+          <div class="box-label">🌐 O'zbekcha</div>
+          <div id="translation" class="box-text">
+            <span id="tr-ph" class="ph">Tarjima shu yerda paydo bo'ladi...</span>
+          </div>
+          <div id="dots" class="dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div id="err" class="err"></div>
+      </div>
+
+      <div class="mic-section">
+        <span id="mic-hint" class="mic-hint">Gapirish uchun bosing</span>
+        <button id="mic-btn" class="mic-btn" onclick="toggleRecording()">🎙</button>
+        <span id="mic-status" class="mic-status">Tayyor</span>
+      </div>
+    </div>
+
+    <!-- TALAFFUZ SAHIFASI -->
+    <div id="page-pronounce" class="page hidden">
+      <div class="content">
+        <div class="box">
+          <div class="box-label">📝 Ibora kiriting</div>
+          <input id="phrase-input" class="phrase-input" type="text"
+            placeholder="Masalan: Hello, how are you?" />
+          <button class="practice-btn" onclick="startPractice()">Mashq qilish</button>
+        </div>
+
+        <div id="practice-area" class="hidden">
+          <div class="box target-box">
+            <div class="box-label">
+              🎯 Aytish kerak
+              <button class="clear-btn speak-btn" onclick="speakCorrect(targetPhrase)" title="Eshitish">🔊</button>
+            </div>
+            <div id="target-phrase" class="target-text"></div>
+          </div>
+
+          <div class="box result-box">
+            <div class="box-label">
+              🎙 Siz aytdingiz
+              <button class="clear-btn" onclick="resetPractice()">↺</button>
+            </div>
+            <div id="said-text" class="box-text">
+              <span class="ph">Quyidagi tugmani bosing...</span>
+            </div>
+          </div>
+
+          <div id="score-area" class="score-area hidden">
+            <div class="score-circle">
+              <span id="score-num">0</span>
+              <span class="score-max">/10</span>
+            </div>
+            <div id="score-label" class="score-label"></div>
+            <div id="score-detail" class="score-detail"></div>
+          </div>
+
+          <div id="p-err" class="err"></div>
+        </div>
+      </div>
+
+      <div class="mic-section">
+        <span id="p-mic-hint" class="mic-hint">Iborani aytish uchun bosing</span>
+        <button id="p-mic-btn" class="mic-btn" onclick="togglePronounce()">🎙</button>
+        <span id="p-mic-status" class="mic-status">Tayyor</span>
+      </div>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('SW registered:', r.scope))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+</body>
+</html>
